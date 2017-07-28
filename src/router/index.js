@@ -10,7 +10,7 @@ export default new Router({
   routes: [
     {
       path: '/goods',
-      name: 'goods',
+      name: 'Goods',
       component: goods
     },
     {

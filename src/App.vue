@@ -4,13 +4,13 @@
     <!--<router-view></router-view>-->
     <div class="tab">
       <div class="tab-item">
-        <router-link :to="{name:'goods'}">商品</router-link>
+        <router-link :to="{name:'Goods'}">商品</router-link>
       </div>
       <div class="tab-item">
-        <a href="##">评论</a>
+        <router-link :to="{name:'Ratings'}">评论</router-link>
       </div>
       <div class="tab-item">
-        <a href="##">商家</a>
+        <router-link :to="{name:'Seller'}">商家</router-link>
       </div>
     </div>
     <router-view></router-view>
@@ -33,5 +33,20 @@ export default {
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
     color: #2c3e50;
+  }
+  .tab{
+    display: flex;
+    width:100%;
+    height:40px;
+    line-height: 40px;
+    border-bottom:1px solid rgba(7,17,27,0.1);
+    .tab-item{
+      flex:1;
+      text-align: center;
+      font-size: 14px;
+      .router-link-exact-active{
+        color:#f01414;
+      }
+    }
   }
 </style>
