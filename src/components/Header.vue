@@ -17,28 +17,76 @@
           <span class="text">在线支付满28减5</span>
         </div>
       </div>
-      <div class="support-count">
+      <div class="support-count" @click="showDetails()">
         <span class="count">5个</span>
         <i class="icon-keyboard_arrow_right"></i>
       </div>
     </div>
-    <div class="bulletin-wrapper">
+    <div class="bulletin-wrapper" @click="showDetails()">
       <span class="bulletin-title"></span>
       <span class="bulletin-text">粥品香坊其烹饪粥料的秘方源于中国千年古法，在融合现代制作精美粥品</span>
       <i class="icon-keyboard_arrow_right"></i>
     </div>
+    <transition name="fade">
+      <div class="detail" v-if="detailShow">
+        <div class="detail-wrapper">
+          <div class="detail-main">
+            <h1 class="name">粥品香坊（回龙观）</h1>
+            <div class="star-wrapper">
+              <star :size="48"></star>
+            </div>
+            <div class="title">
+              <div class="line"></div>
+              <div class="text">优惠信息</div>
+              <div class="line"></div>
+            </div>
+            <ul class="supports">
+              <li class="support-item">
+                <span class="icon"></span>
+                <span class="text">在线支付满28减5</span>
+              </li>
+            </ul>
+            <div class="title">
+              <div class="line"></div>
+              <div class="text">商家公告</div>
+              <div class="line"></div>
+            </div>
+            <div class="bulletin">
+              粥品香坊其烹饪粥料的秘方源于中国千年古法，在融和现代制作工艺，由世界烹饪大师屈浩先生领衔研发。坚守纯天然、0添加的良心品质深得消费者青睐，发展至今成为粥类的引领品牌。是2008年奥运会和2013年园博会指定餐饮服务商。
+            </div>
+          </div>
+        </div>
+        <div class="detail-close" >
+          <i class="icon-close" @click="hideDetails()"></i>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 <script>
+    import star from '../components/star'
     export default{
         data(){
-            return {}
+            return {
+              detailShow:false
+            }
         },
-       /* props:{
+        props:{
             seller:{
                 type:Object
             }
-        }*/
+        },
+        methods:{
+          showDetails(){
+            this.detailShow=true
+          },
+          hideDetails(){
+            this.detailShow=false
+          }
+        },
+        components:{
+          star:star
+        }
     }
 </script>
 <style lang="less" scoped>
@@ -153,5 +201,86 @@
         top:8px;
       }
     }
+    .detail{
+      position: fixed;
+      top:0;
+      left:0;
+      width:100%;
+      height:100%;
+      background: rgba(7,17,27,0.8);
+      backdrop-filter :blur(10px);
+      .detail-wrapper{
+        min-height: 100%;
+        .detail-main{
+          margin-top:64px;
+          padding-bottom:64px;
+          color:#ffffff;
+          .name{
+            font-size: 16px;
+            font-weight:700;
+            line-height: 16px;
+            text-align: center;
+          }
+          .star-wrapper{
+            margin:16px 11px 28px 0;
+            text-align: center;
+          }
+          .title{
+            display: flex;
+            width:80%;
+            margin:0 auto 24px auto;
+            .line{
+              flex: 1;
+              height:1px;
+              background: rgba(255,255,255,0.2);
+              margin-top:7px;
+            }
+            .text{
+              padding:0 12px;
+              font-size: 14px;
+              font-weight: 700;
+            }
+          }
+          .supports{
+            padding:0 0 28px 36px;
+            .support-item{
+              padding:0 6px 12px 16px;
+              text-align:left;
+              .text{
+                font-size: 12px;
+                vertical-align: middle;
+                line-height: 12px;
+                font-weight:200;
+              }
+            }
+          }
+          .bulletin{
+            padding:0 48px;
+            font-size: 12px;
+            font-weight: 200;
+            line-height: 24px;
+            text-align: left;
+          }
+
+        }
+      }
+      .detail-close{
+        position: relative;
+        width:32px;
+        height:32px;
+        margin :-120px auto 0 auto;
+        clear:both;
+        font-size: 32px;
+        color:rgba(255,255,255,0.5);
+      }
+      &.fade-enter-active,&.fade-leave-active{
+        transition: opacity 0.5s;
+      }
+      &.fade-enter,&.fade-leave-active{
+      opacity: 0;
+      }
+    }
+
+
   }
 </style>
