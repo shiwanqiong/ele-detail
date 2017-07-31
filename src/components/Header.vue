@@ -41,8 +41,8 @@
               <div class="line"></div>
             </div>
             <ul class="supports">
-              <li class="support-item">
-                <span class="icon"></span>
+              <li v-for="n in 5" class="support-item">
+                <span class="icon" :class="iconClassMap[n-1]"></span>
                 <span class="text">在线支付满28减5</span>
               </li>
             </ul>
@@ -68,9 +68,13 @@
     export default{
         data(){
             return {
-              detailShow:false
+              detailShow:false,
+              iconClassMap:['decrease', 'discount', 'special', 'invoice', 'guarantee']
             }
         },
+        /*create(){
+          this.iconClassMap=['decrease', 'discount', 'special', 'invoice', 'guarantee'];
+        },*/
         props:{
             seller:{
                 type:Object
@@ -129,7 +133,7 @@
             display: inline-block;
             width:12px;
             height:12px;
-            vertical-align: middle;
+            vertical-align: top;
             margin-right:4px;
             background-size: 100%;
             background-repeat: no-repeat;
@@ -251,6 +255,30 @@
                 vertical-align: middle;
                 line-height: 12px;
                 font-weight:200;
+              }
+              .icon{
+                display:inline-block;
+                width:16px;
+                height:16px;
+                vertical-align: top;
+                margin-right: 6px;
+                background-size: 100%;
+                background-repeat: no-repeat;
+                &.decrease{
+                  .bg-image('decrease_2')
+                }
+                &.discount{
+                  .bg-image('discount_2')
+                }
+                &.guarantee{
+                  .bg-image('guarantee_2')
+                }
+                &.invoice{
+                  .bg-image('invoice_2')
+                }
+                &.special{
+                  .bg-image('special_2')
+                }
               }
             }
           }

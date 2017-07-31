@@ -1,6 +1,6 @@
-<tenplate>
+<template>
   <div></div>
-</tenplate>
+</template>
 <script>
   export default{
     data:function(){
