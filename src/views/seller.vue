@@ -1,82 +1,93 @@
 <template>
   <div class="seller">
-    <div class="seller-wrapper">
-      <div class="info">
-        <div class="title-info">
-          <div class="title">
-            <div class="name">粥品香坊（回龙观）</div>
-            <div class="star-wrapper">
-              <div class="star">
-                <star :size="36"></star>
+    <div class="seller-wrapper" ref="sellerWrapper">
+      <div class="seller-content">
+        <div class="info">
+          <div class="title-info">
+            <div class="title">
+              <div class="name">粥品香坊（回龙观）</div>
+              <div class="star-wrapper">
+                <div class="star">
+                  <star :size="36"></star>
+                </div>
+                <span class="rate-count">(24)</span>
+                <span class="sell-count">月售90单</span>
               </div>
-              <span class="rate-count">(24)</span>
-              <span class="sell-count">月售90单</span>
+            </div>
+            <div class="collect" @click="collect=!collect">
+              <span class="icon-favorite" :class="{'active':collect}"></span>
+              <span class="text">{{collect?'已收藏':'收藏'}}</span>
             </div>
           </div>
-          <div class="collect">
-            <span class="icon-favorite"></span>
-            <span class="text">收藏</span>
+          <div class="remark">
+            <dl>
+              <dt>起送价</dt>
+              <dd>20 <span>元</span></dd>
+            </dl>
+            <dl>
+              <dt>商家配送</dt>
+              <dd>4 <span>元</span></dd>
+            </dl>
+            <dl>
+              <dt>平均配送时间</dt>
+              <dd>38 <span>分钟</span></dd>
+            </dl>
           </div>
         </div>
-        <div class="remark">
-          <dl>
-            <dt>起送价</dt>
-            <dd>20 <span>元</span></dd>
-          </dl>
-          <dl>
-            <dt>商家配送</dt>
-            <dd>4 <span>元</span></dd>
-          </dl>
-          <dl>
-            <dt>平均配送时间</dt>
-            <dd>38 <span>分钟</span></dd>
-          </dl>
-        </div>
-      </div>
-      <div class="space"></div>
-      <div class="activities">
-        <div class="bulletin">
-          <h1>公告与活动</h1>
-          <div class="content">
-            粥品香坊其烹饪粥料的秘方源于中国千年古法，在融和现代制作工艺，由世界烹饪大师屈浩先生领衔研发。坚守纯天然、0添加的良心品质深得消费者青睐，发展至今成为粥类的引领品牌。是2008年奥运会和2013年园博会指定餐饮服务商。
+        <div class="space"></div>
+        <div class="activities">
+          <div class="bulletin">
+            <h1>公告与活动</h1>
+            <div class="content">
+              粥品香坊其烹饪粥料的秘方源于中国千年古法，在融和现代制作工艺，由世界烹饪大师屈浩先生领衔研发。坚守纯天然、0添加的良心品质深得消费者青睐，发展至今成为粥类的引领品牌。是2008年奥运会和2013年园博会指定餐饮服务商。
+            </div>
+          </div>
+          <div class="supports">
+            <ul>
+              <li v-for="n in 4" class="item">
+                <icon-map :iconType="n-1"></icon-map>
+                <span class="text">在线支付满28减5</span>
+              </li>
+            </ul>
           </div>
         </div>
-        <div class="supports">
+        <div class="space"></div>
+        <div class="seller-detail seller-img">
+          <h1>商家实景</h1>
+          <div class="img-wrapper">
+            <img v-for="n in 4" src="" alt="" width="120" height="90">
+          </div>
+        </div>
+        <div class="space"></div>
+        <div class="seller-detail seller-textInfo">
+          <h1>商家信息</h1>
           <ul>
-            <li v-for="n in 4" class="item">
-              <icon-map :iconType="n-1"></icon-map>
-              <span class="text">在线支付满28减5</span>
+            <li class="item" v-for="n in 4">
+              <span class="text">该商家支持发票，请下单写好发票抬头</span>
             </li>
           </ul>
         </div>
       </div>
-      <div class="space"></div>
-      <div class="seller-detail seller-img">
-        <h1>商家实景</h1>
-        <div class="img-wrapper">
-          <img v-for="n in 4" src="" alt="" width="120" height="90">
-        </div>
-      </div>
-      <div class="space"></div>
-      <div class="seller-detail seller-textInfo">
-        <h1>商家信息</h1>
-        <ul>
-          <li class="item" v-for="n in 4">
-            <span class="text">该商家支持发票，请下单写好发票抬头</span>
-          </li>
-        </ul>
-      </div>
+
     </div>
   </div>
 </template>
 <script>
   import star from '../components/star.vue'
   import iconMap from '../components/iconMap.vue'
+  import BScroll from 'better-scroll'
   export default{
     data(){
       return {
-
+        collect:false
       }
+    },
+    mounted(){
+      this.$nextTick(()=>{
+        this.sellerScroll = new BScroll(this.$refs.sellerWrapper, {
+          click: true
+        })
+      })
     },
     components:{
       star:star,
@@ -89,6 +100,14 @@
 <style lang="less" scoped>
   @color1:#4d555d;
   @normalColor:#07111b;
+  .seller-wrapper{
+    position: absolute;
+    top: 174px;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    overflow: hidden;
+  }
   .info{
     padding:18px 0;
     margin:0 18px;
@@ -121,12 +140,22 @@
         }
       }
       .collect{
+        text-align: center;
+        width:50px;
         .text{
           display: block;
           text-align: center;
           font-size: 10px;
           color:@color1;
           padding-top:4px;
+        }
+        .icon-favorite{
+          font-size:24px;
+          line-height: 24px;
+          color:#d4d6d9;
+          &.active{
+            color:#f01414;
+          }
         }
       }
     }

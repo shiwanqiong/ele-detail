@@ -1,79 +1,106 @@
 <template>
-  <div class="ratings">
-    <div class="rating-info">
-      <div class="rating-score">
-        <dl>
-          <dt>4.2</dt>
-          <dd class="rating-text">综合评分</dd>
-          <dd class="rating-des">高于周边商家69.2%</dd>
-        </dl>
-      </div>
-      <div class="rating-star">
-        <div class="rate-item">
-          <span class="rate-item-text">服务态度</span>
-          <div class="star-wrapper"></div>
-          <span class="rate-item-score">4.1</span>
+    <div class="rating-wrapper" ref="ratingWrapper">
+      <div class="rating-main">
+        <div class="rating-info">
+          <div class="rating-score">
+            <dl>
+              <dt>{{seller.score}}</dt>
+              <dd class="rating-text">综合评分</dd>
+              <dd class="rating-des">高于周边商家{{seller.rankRate}}%</dd>
+            </dl>
+          </div>
+          <div class="rating-star">
+            <div class="rate-item">
+              <span class="rate-item-text">服务态度</span>
+              <div class="star-wrapper"></div>
+              <span class="rate-item-score">{{seller.serviceScore}}</span>
+            </div>
+            <div class="rate-item">
+              <span class="rate-item-text">服务态度</span>
+              <div class="star-wrapper"></div>
+              <span class="rate-item-score">{{seller.foodScore}}</span>
+            </div>
+            <div class="rate-item">
+              <span class="rate-item-text">送达时间</span>
+              <span class="rate-item-time">{{seller.deliveryTime}}分钟</span>
+            </div>
+          </div>
         </div>
-        <div class="rate-item">
-          <span class="rate-item-text">服务态度</span>
-          <div class="star-wrapper"></div>
-          <span class="rate-item-score">4.1</span>
-        </div>
-        <div class="rate-item">
-          <span class="rate-item-text">送达时间</span>
-          <span class="rate-item-time">38分钟</span>
+        <div class="space"></div>
+        <div class="rating-content">
+          <div class="rating-tab">
+            <span class="rating-item">全部 <span>24</span></span>
+            <span class="rating-item">推荐 <span>18</span></span>
+            <span class="rating-item bad-rating">吐槽 <span>6</span></span>
+          </div>
+          <div class="switch" @click="evelflag=!evelflag">
+            <span class="icon-check_circle" :class="{'on':evelflag}"></span>
+            <span class="text">只看有内容的评价</span>
+          </div>
+          <div class="rating-content-list">
+            <ul>
+              <li v-for="rating in ratings" v-if="rating.text!=''" class="list-item">
+                <div class="avatar">
+                  <img :src="rating.avatar" alt="" width="28" height="28">
+                </div>
+                <div class="content">
+                  <div class="user"><span class="name">{{rating.name}}</span><span class="date-time">{{rating.rateTime}}</span></div>
+                  <div class="star-wrapper">
+                    <div class="star"></div>
+                    <span class="deliveryTime">{{rating.deliveryTime}}分钟</span>
+                  </div>
+                  <div class="text">
+                    {{rating.text}}
+                  </div>
+                  <div class="recommend">
+                    <span class="icon icon-thumb_up"></span>
+                    <span class="dish"v-for="recommend in rating.recommend">{{recommend}}</span>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
-    <div class="space"></div>
-    <div class="rating-content">
-      <div class="rating-tab">
-        <span class="rating-item">全部 <span>24</span></span>
-        <span class="rating-item">推荐 <span>18</span></span>
-        <span class="rating-item bad-rating">吐槽 <span>6</span></span>
-      </div>
-      <div class="switch" @click="evelflag=!evelflag">
-        <span class="icon-check_circle" :class="{'on':evelflag}"></span>
-        <span class="text">只看有内容的评价</span>
-      </div>
-      <div class="rating-content-list">
-        <ul>
-          <li v-for="n in 2" class="list-item">
-            <div class="avatar">
-              <img src="" alt="" width="28" height="28">
-            </div>
-            <div class="content">
-              <div class="user"><span class="name">3********c</span><span class="date-time">2017-07-31 16:23</span></div>
-              <div class="star-wrapper">
-                <div class="star"></div>
-                <span class="deliveryTime">30分钟</span>
-              </div>
-              <div class="text">
-                不错,粥很好喝,我经常吃这一家,非常赞,以后也会常来吃,强烈推荐.
-              </div>
-              <div class="recommend">
-                <span class="icon icon-thumb_up"></span>
-                <span class="dish" v-for="n in 4">南瓜粥</span>
-              </div>
-            </div>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </div>
 </template>
 <script>
+  import axios from 'axios'
+  import BScroll from 'better-scroll'
   export default{
     data:function(){
       return {
-        evelflag:true
+        evelflag:true,
+        ratings:[],
+        seller:{}
       }
+    },
+    created(){
+      axios.get('static/data.json').then((res)=>{
+        this.seller=res.data.seller;
+        this.ratings=res.data.ratings;
+      })
+    },
+    mounted(){
+      this.$nextTick(()=>{
+          this.ratingScroll=new BScroll(this.$refs.ratingWrapper,{
+              click:true
+          })
+      })
     }
 
   }
 
 </script>
 <style lang="less" scoped>
+  .rating-wrapper{
+    position: absolute;
+    top:174px;
+    bottom:0;
+    width:100%;
+    left:0;
+    bottom:0;
+  }
   .rating-info{
     display: flex;
     margin:18px 0;

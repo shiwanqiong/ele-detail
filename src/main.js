@@ -13,4 +13,4 @@ new Vue({
   template: '<App/>',
   components: { App }
 })
-router.push('seller')
+router.push('goods')
