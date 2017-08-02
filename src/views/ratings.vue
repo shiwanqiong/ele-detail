@@ -12,12 +12,12 @@
           <div class="rating-star">
             <div class="rate-item">
               <span class="rate-item-text">服务态度</span>
-              <div class="star-wrapper"></div>
+              <star :size="36" :score="seller.serviceScore"></star>
               <span class="rate-item-score">{{seller.serviceScore}}</span>
             </div>
             <div class="rate-item">
-              <span class="rate-item-text">服务态度</span>
-              <div class="star-wrapper"></div>
+              <span class="rate-item-text">食物口味</span>
+              <star :size="36" :score="seller.foodScore"></star>
               <span class="rate-item-score">{{seller.foodScore}}</span>
             </div>
             <div class="rate-item">
@@ -44,9 +44,9 @@
                   <img :src="rating.avatar" alt="" width="28" height="28">
                 </div>
                 <div class="content">
-                  <div class="user"><span class="name">{{rating.name}}</span><span class="date-time">{{rating.rateTime}}</span></div>
+                  <div class="user"><span class="name">{{rating.username}}</span><span class="date-time">{{rating.rateTime}}</span></div>
                   <div class="star-wrapper">
-                    <div class="star"></div>
+                    <star :size="24" :score="rating.score"></star>
                     <span class="deliveryTime">{{rating.deliveryTime}}分钟</span>
                   </div>
                   <div class="text">
@@ -65,6 +65,7 @@
     </div>
 </template>
 <script>
+  import star from '../components/star.vue'
   import axios from 'axios'
   import BScroll from 'better-scroll'
   export default{
@@ -79,16 +80,16 @@
       axios.get('static/data.json').then((res)=>{
         this.seller=res.data.seller;
         this.ratings=res.data.ratings;
+        this.$nextTick(()=>{
+          this.ratingScroll=new BScroll(this.$refs.ratingWrapper,{
+            click:true
+          })
+        })
       })
     },
-    mounted(){
-      this.$nextTick(()=>{
-          this.ratingScroll=new BScroll(this.$refs.ratingWrapper,{
-              click:true
-          })
-      })
+    components:{
+        star:star
     }
-
   }
 
 </script>
@@ -100,6 +101,7 @@
     width:100%;
     left:0;
     bottom:0;
+    overflow: hidden;
   }
   .rating-info{
     display: flex;
@@ -131,12 +133,13 @@
       flex:1;
       padding:0 24px;
       .star-wrapper{
-        display: inline-block;
+        display: flex;
       }
       .rate-item{
         margin-bottom:8px;
         font-size: 12px;
         line-height: 18px;
+        display: flex;
         .rate-item-text{
           color:#07111b;
           margin-right:12px;
@@ -219,10 +222,12 @@
             float: right;
           }
           .star-wrapper{
+            display: flex;
             padding-top:4px;
             margin-bottom:6px;
             .deliveryTime{
               color:#93999f;
+              padding-left:6px;
             }
           }
           .text{

@@ -5,13 +5,13 @@
         <div class="info">
           <div class="title-info">
             <div class="title">
-              <div class="name">粥品香坊（回龙观）</div>
+              <div class="name">{{seller.name}}</div>
               <div class="star-wrapper">
                 <div class="star">
-                  <star :size="36"></star>
+                  <star :size="36" :score="seller.score"></star>
                 </div>
-                <span class="rate-count">(24)</span>
-                <span class="sell-count">月售90单</span>
+                <span class="rate-count">({{seller.ratingCount}})</span>
+                <span class="sell-count">月售{{seller.sellCount}}单</span>
               </div>
             </div>
             <div class="collect" @click="collect=!collect">
@@ -22,11 +22,11 @@
           <div class="remark">
             <dl>
               <dt>起送价</dt>
-              <dd>20 <span>元</span></dd>
+              <dd>{{seller.minPrice}} <span>元</span></dd>
             </dl>
             <dl>
               <dt>商家配送</dt>
-              <dd>4 <span>元</span></dd>
+              <dd>{{seller.deliveryPrice}} <span>元</span></dd>
             </dl>
             <dl>
               <dt>平均配送时间</dt>
@@ -39,14 +39,14 @@
           <div class="bulletin">
             <h1>公告与活动</h1>
             <div class="content">
-              粥品香坊其烹饪粥料的秘方源于中国千年古法，在融和现代制作工艺，由世界烹饪大师屈浩先生领衔研发。坚守纯天然、0添加的良心品质深得消费者青睐，发展至今成为粥类的引领品牌。是2008年奥运会和2013年园博会指定餐饮服务商。
+              {{seller.bulletin}}
             </div>
           </div>
           <div class="supports">
             <ul>
-              <li v-for="n in 4" class="item">
-                <icon-map :iconType="n-1"></icon-map>
-                <span class="text">在线支付满28减5</span>
+              <li v-for="support in seller.supports" class="item">
+                <icon-map :iconType="support.type"></icon-map>
+                <span class="text">{{support.description}}</span>
               </li>
             </ul>
           </div>
@@ -54,16 +54,18 @@
         <div class="space"></div>
         <div class="seller-detail seller-img">
           <h1>商家实景</h1>
-          <div class="img-wrapper">
-            <img v-for="n in 4" src="" alt="" width="120" height="90">
+          <div class="img-wrapper" ref="picsWrapper">
+            <div class="picList">
+              <img v-for="pic in seller.pics" :src="pic" alt="" width="120" height="90">
+            </div>
           </div>
         </div>
         <div class="space"></div>
         <div class="seller-detail seller-textInfo">
           <h1>商家信息</h1>
           <ul>
-            <li class="item" v-for="n in 4">
-              <span class="text">该商家支持发票，请下单写好发票抬头</span>
+            <li class="item" v-for="info in seller.infos">
+              <span class="text">{{info}}</span>
             </li>
           </ul>
         </div>
@@ -75,17 +77,25 @@
 <script>
   import star from '../components/star.vue'
   import iconMap from '../components/iconMap.vue'
+  import axios from 'axios'
   import BScroll from 'better-scroll'
   export default{
     data(){
       return {
-        collect:false
+        collect:false,
+        seller:{}
       }
     },
-    mounted(){
-      this.$nextTick(()=>{
-        this.sellerScroll = new BScroll(this.$refs.sellerWrapper, {
-          click: true
+    created(){
+      axios.get('static/data.json').then((res)=>{
+        this.seller=res.data.seller;
+        this.$nextTick(()=>{
+          this.sellerScroll = new BScroll(this.$refs.sellerWrapper, {
+            click: true
+          });
+          this.picsScroll = new BScroll(this.$refs.picsWrapper,{
+            click:true
+          })
         })
       })
     },
@@ -93,7 +103,6 @@
       star:star,
       iconMap:iconMap
     }
-
   }
 
 </script>
@@ -246,11 +255,11 @@
   }
   .seller-img{
     margin:18px;
+    white-space: nowrap;
+    overflow: hidden;
   }
   .seller-detail{
     .img-wrapper{
-      overflow:auto;
-      white-space: nowrap;
       img{
         margin-right:6px;
         &:last-child{

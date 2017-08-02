@@ -13,9 +13,9 @@
           <div class="foods-group">
             <h1>热销榜</h1>
             <ul class="foods-group-list">
-              <li v-for="list in item.foods" class="foods-group-item">
+              <li v-for="list in item.foods" class="foods-group-item" @click="goDetail(item)">
                 <div class="food-img">
-                  <img src="" alt="" width="57" height="57">
+                  <img :src="list.image" alt="" width="57" height="57">
                 </div>
                 <div class="food-detail">
                   <h2>{{list.name}}</h2>
@@ -29,26 +29,32 @@
         </li>
       </ul>
     </div>
+    <food :food="selectFood" ref="foodDetail"></food>
   </div>
+
 </template>
 <script>
+  import food from '../components/food.vue'
   import axios from 'axios'
   import BScroll from 'better-scroll'
   export default{
     data:function(){
       return {
-          goods:[]
+        goods:[],
+        selectFood:''
+
       }
+    },
+    components:{
+        food:food
     },
     created(){
        axios.get('static/data.json').then((res)=>{
          this.goods=res.data.goods;
+         this.$nextTick(()=>{
+           this._initScroll();
+         })
        })
-    },
-    mounted(){
-      this.$nextTick(()=>{
-        this._initScroll();
-      })
     },
     methods:{
       menuClick(index,event){
@@ -60,6 +66,12 @@
         })
         /*this.foodsScroll.on('scroll', (pos) => {
         })*/
+      },
+      goDetail(food){
+        this.selectFood=food;
+        this.$nextTick(()=>{
+          this.$refs.foodDetail.toggleShow();
+        })
       }
     },
 
