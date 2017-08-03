@@ -29,9 +29,7 @@
         <div class="space"></div>
         <div class="rating-content">
           <div class="rating-tab">
-            <span class="rating-item">全部 <span>24</span></span>
-            <span class="rating-item">推荐 <span>18</span></span>
-            <span class="rating-item bad-rating">吐槽 <span>6</span></span>
+            <span class="rating-item":class="{'bad-rating':index==2,'active':item.active}" v-for="(item,index) in classify" @click="filterEvel(item)">{{item.name}} <span>{{item.count}}</span></span>
           </div>
           <div class="switch" @click="evelflag=!evelflag">
             <span class="icon-check_circle" :class="{'on':evelflag}"></span>
@@ -39,12 +37,12 @@
           </div>
           <div class="rating-content-list">
             <ul>
-              <li v-for="rating in ratings" v-if="rating.text!=''" class="list-item">
+              <li v-for="rating in ratings" class="list-item">
                 <div class="avatar">
                   <img :src="rating.avatar" alt="" width="28" height="28">
                 </div>
                 <div class="content">
-                  <div class="user"><span class="name">{{rating.username}}</span><span class="date-time">{{rating.rateTime}}</span></div>
+                  <div class="user"><span class="name">{{rating.username}}</span><span class="date-time">{{rating.rateTime | time}}</span></div>
                   <div class="star-wrapper">
                     <star :size="24" :score="rating.score"></star>
                     <span class="deliveryTime">{{rating.deliveryTime}}分钟</span>
@@ -52,8 +50,8 @@
                   <div class="text">
                     {{rating.text}}
                   </div>
-                  <div class="recommend">
-                    <span class="icon icon-thumb_up"></span>
+                  <div class="recommend" v-if="rating.recommend.length">
+                    <span class="icon icon-thumb_up" :class="rating.rateType?'icon-thumb_down':'icon-thumb_up'"></span>
                     <span class="dish"v-for="recommend in rating.recommend">{{recommend}}</span>
                   </div>
                 </div>
@@ -69,17 +67,36 @@
   import axios from 'axios'
   import BScroll from 'better-scroll'
   export default{
-    data:function(){
+    data(){
       return {
         evelflag:true,
         ratings:[],
-        seller:{}
+        seller:{},
+        classify:[
+          {
+            name:'全部',
+            count:0,
+            active:false
+          },
+          {
+            name:'推荐',
+            count:0,
+            active:false
+          },
+          {
+            name:'吐槽',
+            count:0,
+            active:false
+          }
+
+        ]
       }
     },
     created(){
       axios.get('static/data.json').then((res)=>{
         this.seller=res.data.seller;
         this.ratings=res.data.ratings;
+        this._initClassifyArr();
         this.$nextTick(()=>{
           this.ratingScroll=new BScroll(this.$refs.ratingWrapper,{
             click:true
@@ -89,6 +106,42 @@
     },
     components:{
         star:star
+    },
+    computed:{
+        evelArr(){
+            let selectedIndex=0;
+            this.classify.forEach((data,index)=>{
+                if(data.active){
+                  selectedIndex=index;
+                }
+            })
+            if (this.ratingScroll) {
+              this.$nextTick(() => {
+                this.ratingScroll.refresh()
+              })
+            }
+            return selectedIndex?this.ratings.filter((data)=>{this.evelflag?data.rateType===selectedIndex-1&&data.text:data.rateType===selectedIndex-1}):this.ratings.filter((data)=>{this.evelflag?data.text:true})
+        }
+    },
+    methods:{
+        _initClassifyArr(){
+          this.classify.forEach((data,index)=>{
+              if(index){
+                data.count=this.ratings.filter((item)=>
+                    item.rateType===index-1
+                ).length;
+              }
+              else{
+                data.count=this.ratings.length;
+              }
+          })
+        },
+      filterEvel(item){
+        this.classify.forEach((data)=>{
+            data.active=false;
+        })
+        item.active=true;
+      }
     }
   }
 
@@ -176,7 +229,7 @@
         background-color: rgba(0,160,220,0.2);
         &.bad-rating{
           background-color: rgba(77,85,93,0.2);
-          &.badActive{
+          &.active{
             background-color: #4d555d;
           }
         }

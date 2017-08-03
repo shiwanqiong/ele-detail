@@ -13,7 +13,7 @@
           <div class="foods-group">
             <h1>热销榜</h1>
             <ul class="foods-group-list">
-              <li v-for="list in item.foods" class="foods-group-item" @click="goDetail(item)">
+              <li v-for="list in item.foods" class="foods-group-item" @click="goDetail(list)">
                 <div class="food-img">
                   <img :src="list.image" alt="" width="57" height="57">
                 </div>
@@ -41,8 +41,7 @@
     data:function(){
       return {
         goods:[],
-        selectFood:''
-
+        selectFood:{}
       }
     },
     components:{

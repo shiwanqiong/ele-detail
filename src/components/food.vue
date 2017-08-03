@@ -2,14 +2,14 @@
   <transition name="food-info">
     <div class="detail-wrapper" ref="detailWrapper" v-show="showDetail">
         <div class="food-detail">
-          <div class="back" @close="toggleShow()">
+          <div class="back" @click="toggleShow()">
             <i class="icon-arrow_lift"></i>
           </div>
           <img :src="food.image" width="100%" height="425" alt="">
           <div class="info">
             <h2 class="title">{{food.name}}</h2>
             <p class="desc"><span>月售{{food.sellCount}}</span> <span>好平率{{food.rating}}%</span></p>
-            <p class="price">￥<span>{{food.price}}</span></p>
+            <p class="price"><span>￥</span>{{food.price}}</p>
           </div>
           <div class="space"></div>
           <div class="food-intro">
@@ -34,12 +34,13 @@
                     <img :src="rating.avatar" alt="" width="28" height="28">
                   </div>
                   <div class="content">
-                    <div class="user"><span class="name">{{rating.username}}</span><span class="date-time">{{rating.rateTime}}</span></div>
+                    <div class="user"><span class="name">{{rating.username}}</span><span class="date-time">{{rating.rateTime | time}}</span></div>
                     <div class="star-wrapper" v-if="rating.score">
                       <star :size="24" :score="rating.score"></star>
                       <span class="deliveryTime">{{rating.deliveryTime}}分钟</span>
                     </div>
                     <div class="text">
+                      <span class="icon" :class="rating.rateType?'icon-thumb_down':'icon-thumb_up'"></span>
                       {{rating.text}}
                     </div>
                   </div>
@@ -53,6 +54,7 @@
 </template>
 <script>
   import BScroll from 'better-scroll'
+  import '../filters/time'
   export default{
       data(){
           return {
@@ -87,7 +89,7 @@
       }
   }
 </script>
-<style lang="less">
+<style lang="less" scoped>
   @import "../assets/less/icon.less";
   .detail-wrapper{
     position: fixed;
@@ -110,6 +112,12 @@
       color:#ffffff;
       padding:10px;
     }
+    .space{
+      width:100%;
+      height:16px;
+      border:1px solid rgba(7,17,27,0.1);
+      background-color: #f3f5f7;
+    }
     .info{
       padding:18px;
       .title{
@@ -130,12 +138,13 @@
       }
       .price{
         padding-top:18px;
-        font-size:10px;
+        font-size:16px;
         color:#f01414;
-        font-weight: 700;
         line-height: 24px;
+        font-weight: 700;
         span{
-          font-size: 14px;
+          font-size: 10px;
+          font-weight: normal;
         }
       }
     }
@@ -207,6 +216,17 @@
             .text{
               font-size: 12px;
               line-height: 18px;
+              .icon{
+                font-size: 12px;
+                line-height: 24px;
+                margin-right:4px;
+                &.icon-thumb_down{
+                  color:#93999f;
+                }
+                &.icon-thumb_up{
+                  color:#00a0dc
+                }
+              }
             }
           }
         }
