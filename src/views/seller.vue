@@ -55,7 +55,7 @@
         <div class="seller-detail seller-img">
           <h1>商家实景</h1>
           <div class="img-wrapper" ref="picsWrapper">
-            <div class="picList">
+            <div class="picList" ref="picList">
               <img v-for="pic in seller.pics" :src="pic" alt="" width="120" height="90">
             </div>
           </div>
@@ -93,18 +93,29 @@
           this.sellerScroll = new BScroll(this.$refs.sellerWrapper, {
             click: true
           });
-          this.picsScroll = new BScroll(this.$refs.picsWrapper,{
-            click:true
-          })
+          this._initPicScroll();
         })
       })
     },
     components:{
       star:star,
       iconMap:iconMap
+    },
+    methods:{
+      _initPicScroll() {
+        if (this.picsScroll) {
+          return
+        }
+        const PIC_WIDTH = 120
+        const MARGIN = 6
+        let picLen = this.seller.pics.length
+        this.$refs.picList.style.width = PIC_WIDTH * picLen + MARGIN * (picLen - 1) + 'px'
+        this.picsScroll = new BScroll(this.$refs.picsWrapper, {
+          scrollX: true
+        })
+      }
     }
   }
-
 </script>
 <style lang="less" scoped>
   @color1:#4d555d;
@@ -220,19 +231,6 @@
   }
   .supports{
     margin:0 18px;
-    /*.item{
-      padding:16px;
-      border-bottom:1px solid rgba(7,17,27,0.1);
-      .text{
-        font-size: 12px;
-        font-weight: normal;
-        color: @normalColor;
-        line-height: 16px;
-      }
-      &:last-child{
-        border:none
-      }
-    }*/
   }
   .item{
     padding:16px;

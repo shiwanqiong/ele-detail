@@ -2,16 +2,16 @@
   <div class="goods">
     <div class="menu-wrapper" ref="menuWrapper">
       <ul class="menu-list">
-        <li v-for="(item,index) in goods"class="menu-item" @click="menuClick(index,$event)">
+        <li v-for="(item,index) in goods" class="menu-item" @click="menuClick(index,$event)" ref="menuItem">
           <span class="text"><span class="icon"></span>{{item.name}}</span>
         </li>
       </ul>
     </div>
     <div class="foods-wrapper" ref="foodsWrapper">
       <ul class="foods-list">
-        <li v-for="item in goods" class="foods-list-item">
+        <li v-for="(item,index) in goods" ref="foodsItem" :class="'foods-group'+index">
           <div class="foods-group">
-            <h1>热销榜</h1>
+            <h1>{{item.name}}</h1>
             <ul class="foods-group-list">
               <li v-for="list in item.foods" class="foods-group-item" @click="goDetail(list)">
                 <div class="food-img">
@@ -57,14 +57,29 @@
     },
     methods:{
       menuClick(index,event){
-        /*this.foodsScroll.scrollTo();*/
+       /* if (!event._constructed) {
+          return
+        }*/
+        var menuItem=this.$refs.menuItem;
+        var foodsGroup=this.$refs.foodsItem;
+        var selectEl='';
+        menuItem.forEach((item,itemindex)=>{
+            item.className='menu-item';
+            if(itemindex==index){
+              item.className='menu-item-selected';
+            }
+        });
+        foodsGroup.forEach((el)=>{
+            if(el.className=='foods-group'+index){
+                selectEl=el;
+            }
+        });
+        this.foodsScroll.scrollToElement(selectEl,300);
       },
       _initScroll(){
         this.foodsScroll=new BScroll(this.$refs.foodsWrapper,{
           click:true
         })
-        /*this.foodsScroll.on('scroll', (pos) => {
-        })*/
       },
       goDetail(food){
         this.selectFood=food;
@@ -88,9 +103,10 @@
     width:100%;
     .menu-wrapper{
       width:80px;
-      .menu-item{
+      background: #f3f5f7;
+      .menu-item,.menu-item-selected{
         display: table;
-        margin:0 12px;
+        padding:0 12px;
         border-bottom:1px solid rgba(7,17,27,0.1);
         height:54px;
         .text{
@@ -103,13 +119,14 @@
           border:none
         }
       }
+      .menu-item-selected{
+        background: #fff;
+        font-weight: 700;
+        margin-top: -1px;
+      }
     }
     .foods-wrapper{
       flex: 1;
-     /* overflow-y: auto;*/
-     /* .foods-list{
-
-      }*/
       .foods-group{
         h1{
           height:26px;
@@ -127,12 +144,12 @@
             position: relative;
             padding:18px 0;
             border-bottom:1px solid rgba(7,17,27,0.1);
+            &:last-child{
+              border:none;
+            }
             .food-detail{
               flex:1;
               padding-left:10px;
-              &:last-child{
-                border:none;
-              }
               h2{
                 font-size:14px;
                 line-height: 14px;

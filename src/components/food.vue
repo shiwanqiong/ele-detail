@@ -19,9 +19,9 @@
           <div class="space"></div>
           <div class="rating-content">
             <div class="rating-tab">
-              <span class="rating-item">全部 <span>24</span></span>
-              <span class="rating-item">推荐 <span>18</span></span>
-              <span class="rating-item bad-rating">吐槽 <span>6</span></span>
+              <span class="rating-item" :class="{'bad-rating':index==2,'active':item.active}" v-for="(item,index) in classifyArr" @click="filterEvel(item)">{{item.name}} <span>{{item.count}}</span></span>
+              <!--<span class="rating-item">推荐 <span>18</span></span>
+              <span class="rating-item bad-rating">吐槽 <span>6</span></span>-->
             </div>
             <div class="switch" @click="evelflag=!evelflag">
               <span class="icon-check_circle" :class="{'on':evelflag}"></span>
@@ -29,7 +29,7 @@
             </div>
             <div class="rating-content-list">
               <ul>
-                <li v-for="rating in food.ratings" class="list-item">
+                <li v-for="rating in evelArr" class="list-item">
                   <div class="avatar">
                     <img :src="rating.avatar" alt="" width="28" height="28">
                   </div>
@@ -59,7 +59,24 @@
       data(){
           return {
             evelflag:false,
-            showDetail:false
+            showDetail:false,
+            classifyArr:[
+              {
+                name:'全部',
+                count:0,
+                active:true
+              },
+              {
+                name:'推荐',
+                count:0,
+                active:false
+              },
+              {
+                name:'吐槽',
+                count:0,
+                active:false
+              }
+            ],
           }
       },
       props:{
@@ -67,12 +84,29 @@
             type:Object
         }
       },
+      computed:{
+          evelArr(){
+            let selectIndex=0;
+            this.classifyArr.forEach((data,index)=>{
+                if(data.active){
+                    selectIndex=index;
+                }
+            })
+            if(this.detailWrapper){
+                this.$nextTick(()=>{
+                    this.detailWrapper.refresh();
+                })
+            }
+            return selectIndex?this.food.ratings.filter((item)=>this.evelflag?item.rateType===selectIndex-1&&item.text:item.rateType===selectIndex-1):this.food.ratings.filter((item)=>this.evelflag?item.text:true)
+          }
+      },
       methods:{
         toggleShow:function(){
           this.showDetail=!this.showDetail;
           if(this.showDetail){
               this.$nextTick(()=>{
                 this._initScroll();
+                this._initClassifyArr();
               })
           }
         },
@@ -85,7 +119,23 @@
             else{
                 this.detailWrapper.refresh()
             }
+        },
+        _initClassifyArr(){
+            this.classifyArr.forEach((data,index)=>{
+                if(index){
+                  data.count=this.food.ratings.filter(item=>item.rateType===index-1).length;
+                }
+                else{
+                  data.count=this.food.ratings.length;
+                }
+            })
+        },
+        filterEvel(data){
+          this.classifyArr.forEach((item)=>item.active=false);
+          data.active=true;
         }
+
+
       }
   }
 </script>
@@ -181,7 +231,7 @@
           background-color: rgba(0, 160, 220, 0.2);
           &.bad-rating {
             background-color: rgba(77, 85, 93, 0.2);
-            &.badActive {
+            &.active {
               background-color: #4d555d;
             }
           }

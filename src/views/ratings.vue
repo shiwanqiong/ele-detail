@@ -37,7 +37,7 @@
           </div>
           <div class="rating-content-list">
             <ul>
-              <li v-for="rating in ratings" class="list-item">
+              <li v-for="rating in evelArr" class="list-item">
                 <div class="avatar">
                   <img :src="rating.avatar" alt="" width="28" height="28">
                 </div>
@@ -76,7 +76,7 @@
           {
             name:'全部',
             count:0,
-            active:false
+            active:true
           },
           {
             name:'推荐',
@@ -120,7 +120,7 @@
                 this.ratingScroll.refresh()
               })
             }
-            return selectedIndex?this.ratings.filter((data)=>{this.evelflag?data.rateType===selectedIndex-1&&data.text:data.rateType===selectedIndex-1}):this.ratings.filter((data)=>{this.evelflag?data.text:true})
+            return selectedIndex?this.ratings.filter((data)=>this.evelflag?data.rateType===selectedIndex-1&&data.text:data.rateType===selectedIndex-1):this.ratings.filter((data)=>this.evelflag?data.text:true)
         }
     },
     methods:{
